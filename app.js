@@ -2,6 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
+const morgan = require('morgan');
 require('dotenv').config();
 
 const userRouter = require('./routes/user');
@@ -26,6 +27,12 @@ app.use(
     credentials: true,
   }),
 );
+
+if (process.env.NODE_ENV === 'production') {
+  app.use(morgan('combined'));
+} else {
+  app.use(morgan('dev'));
+}
 
 app.get('/', (req, res) => {
   res.status(200).json('Success');
