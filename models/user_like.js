@@ -7,14 +7,16 @@ module.exports = (sequelize, DataTypes) => {
       answer_id: {
         type: DataTypes.INTEGER,
         allowNull: false,
+        onDelete: 'cascade',
       },
       user_id: {
         type: DataTypes.INTEGER,
         allowNull: false,
+        onDelete: 'cascade',
       },
     },
     {
-      tableName: "user_like"
+      tableName: 'user_like',
     },
   );
 

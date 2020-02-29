@@ -29,12 +29,18 @@ module.exports = (sequelize, DataTypes) => {
   users.associate = function(models) {
     models.users.hasMany(models.questions, {
       foreignKey: 'user_id',
+      onDelete: 'cascade',
+      hooks: true,
     });
     models.users.hasMany(models.answers, {
       foreignKey: 'user_id',
+      onDelete: 'cascade',
+      hooks: true,
     });
     models.users.hasMany(models.user_like, {
       foreignKey: 'user_id',
+      onDelete: 'cascade',
+      hooks: true,
     });
   };
   return users;
