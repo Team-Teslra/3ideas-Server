@@ -14,10 +14,12 @@ module.exports = (sequelize, DataTypes) => {
       user_id: {
         type: DataTypes.INTEGER,
         allowNull: false,
+        onDelete: 'cascade',
       },
       question_id: {
         type: DataTypes.INTEGER,
         allowNull: false,
+        onDelete: 'cascade',
       },
     },
     {},
@@ -32,6 +34,8 @@ module.exports = (sequelize, DataTypes) => {
     });
     models.answers.hasMany(models.user_like, {
       foreignKey: 'answer_id',
+      onDelete: 'cascade',
+      hooks: true,
     });
   };
   return answers;

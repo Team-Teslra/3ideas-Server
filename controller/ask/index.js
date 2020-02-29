@@ -88,6 +88,14 @@ module.exports = {
             model: db.answers,
             attributes: ['id'],
           },
+          {
+            model: db.category_question,
+            attributes: ['id'],
+            include: {
+              model: db.categories,
+              attributes: ['categoryName'],
+            },
+          },
         ],
       })
       .then(result => {
@@ -99,7 +107,14 @@ module.exports = {
         const { id, title, contents, questionFlag, createdAt, updatedAt } = result;
         const username = result.user.userName;
         const commentsCount = result.answers.length;
-        res.status(200).json({ id, title, contents, username, questionFlag, createdAt, updatedAt, commentsCount });
+        const categories = result.category_questions.map(element => {
+          const { categoryName } = element.category;
+          return { categoryName };
+        });
+
+        res
+          .status(200)
+          .json({ id, title, contents, username, questionFlag, createdAt, updatedAt, commentsCount, categories });
       })
       .catch(err => res.status(400).send(err));
   },

@@ -7,10 +7,12 @@ module.exports = (sequelize, DataTypes) => {
       question_id: {
         type: DataTypes.INTEGER,
         allowNull: false,
+        onDelete: 'cascade',
       },
       category_id: {
         type: DataTypes.INTEGER,
         allowNull: false,
+        onDelete: 'cascade',
       },
     },
     {

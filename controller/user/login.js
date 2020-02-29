@@ -1,42 +1,10 @@
-const { users, blacklist } = require('../../models');
+const { users } = require('../../models');
 const crypto = require('crypto');
 const jwt = require('jsonwebtoken');
 
 module.exports = {
   post: (req, res) => {
     const { username } = req.body;
-
-    if (req.cookies.token) {
-      //? 이미 발급받은 토큰이 존재함
-      let loginErr = false;
-      const token = req.cookies.token;
-
-      blacklist
-        .findOne({ where: { token } })
-        .then(result => {
-          if (result) {
-            //! blacklist에 올라간 token
-            return;
-          }
-
-          //? 유효한 토큰인지 확인
-          jwt.verify(token, process.env.SECRET_KEY, (err, decoded) => {
-            if (decoded) {
-              //! 유효한 토큰
-              loginErr = true;
-              return res.status(401).json('you have token');
-            }
-          });
-        })
-        .catch(err => {
-          loginErr = true;
-          return res.status(400).send(err);
-        });
-
-      if (loginErr) {
-        return;
-      }
-    }
 
     if (!username) {
       //! username이 비어있음

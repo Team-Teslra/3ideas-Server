@@ -2,6 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
+const morgan = require('morgan');
 require('dotenv').config();
 
 const userRouter = require('./routes/user');
@@ -21,11 +22,17 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(
   cors({
-    origin: 'http://localhost:3000',
+    origin: process.env.NODE_ENV ? process.env.PROD_CORS_ORIGIN : 'http://localhost:3000',
     methods: ['GET', 'POST', 'DELETE', 'PATCH'],
     credentials: true,
   }),
 );
+
+if (process.env.NODE_ENV === 'production') {
+  app.use(morgan('combined'));
+} else {
+  app.use(morgan('dev'));
+}
 
 app.get('/', (req, res) => {
   res.status(200).json('Success');
