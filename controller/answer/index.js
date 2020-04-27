@@ -32,7 +32,7 @@ module.exports = {
       })
       .catch(err => {
         console.log(err);
-        res.status(400).send(err);
+        res.status(500).send(err);
       });
   },
 
@@ -117,6 +117,6 @@ module.exports = {
 
         return res.status(200).json(`answerId: ${answerId}'s answer deleted`);
       })
-      .catch(err => res.status(400).send(err));
+      .catch(err => res.status(500).send(err));
   },
 };
