@@ -16,13 +16,13 @@ module.exports = {
 
     users
       .findOne({ where: { userName: username } })
-      .then(user => {
+      .then((user) => {
         // * 없는 유저일 경우 에러 보내기
         if (!user) {
           return res.status(404).json('invalid user!');
         }
         // * answers DB에 답변을 새로 생성하고 답변 id를 보낸다.
-        answers.create({ contents, user_id: user.id, question_id: askId }).then(result => {
+        answers.create({ contents, user_id: user.id, question_id: askId }).then((result) => {
           if (!result) {
             return res.status(400).json('failed to post new answer');
           }
@@ -30,8 +30,7 @@ module.exports = {
           res.status(201).json({ id: id });
         });
       })
-      .catch(err => {
-        console.log(err);
+      .catch((err) => {
         res.status(500).send(err);
       });
   },
@@ -51,7 +50,7 @@ module.exports = {
           { model: users, attributes: ['userName'] },
         ], //* left-join이 기본이다
       })
-      .then(answer => {
+      .then((answer) => {
         if (!answer) {
           // ? answer가 없을때
           return res.status(404).json('no answers!');
@@ -68,7 +67,7 @@ module.exports = {
         const { id, contents, answerFlag, createdAt, updatedAt } = answer;
         return res.status(200).json({ id, username: userName, contents, answerFlag, like, createdAt, updatedAt });
       })
-      .catch(err => res.status(400).send(err));
+      .catch((err) => res.status(500).send(err));
   },
 
   // ? 답변글 수정 ( /answer/답변글id )
@@ -90,13 +89,13 @@ module.exports = {
 
     answers
       .update(patchValues, { where: { id: answerId } })
-      .then(result => {
+      .then((result) => {
         if (!result) {
           return res.status(400).json('failed to update data!');
         }
         return res.status(200).json({ id: answerId });
       })
-      .catch(err => res.status(400).send(err));
+      .catch((err) => res.status(500).send(err));
   },
 
   // ? 답변글 삭제 ( /answer/답변글id )
@@ -109,7 +108,7 @@ module.exports = {
 
     answers
       .destroy({ where: { id: answerId } })
-      .then(result => {
+      .then((result) => {
         // console.log(result, ' deleted');
         if (!result) {
           return res.status(422).json('invalid answer id');
@@ -117,6 +116,6 @@ module.exports = {
 
         return res.status(200).json(`answerId: ${answerId}'s answer deleted`);
       })
-      .catch(err => res.status(500).send(err));
+      .catch((err) => res.status(500).send(err));
   },
 };
