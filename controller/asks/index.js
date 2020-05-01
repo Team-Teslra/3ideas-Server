@@ -2,9 +2,9 @@ const { questions, users, answers } = require('../../models');
 
 module.exports = {
   //? 질문글 목록 요청( /asks )
-  get: (req, res) => {
-    questions
-      .findAll({
+  get: async (req, res) => {
+    try {
+      let asks = await questions.findAll({
         attributes: ['id', 'title', 'questionFlag', 'createdAt', 'contents'],
         include: [
           {
@@ -16,23 +16,24 @@ module.exports = {
             attributes: ['id'],
           },
         ],
-      })
-      .then(asks => {
-        asks = asks.map(value => {
-          const ask = {};
-          Object.assign(ask, value.dataValues);
+      });
 
-          ask.username = ask.user.userName;
-          delete ask.user;
+      asks = asks.map((value) => {
+        const ask = {};
+        Object.assign(ask, value.dataValues);
 
-          ask.commentsCount = ask.answers.length;
-          delete ask.answers;
+        ask.username = ask.user.userName;
+        delete ask.user;
 
-          return ask;
-        });
+        ask.commentsCount = ask.answers.length;
+        delete ask.answers;
 
-        res.status(200).json(asks);
-      })
-      .catch(err => res.status(400).send(err));
+        return ask;
+      });
+
+      return res.status(200).json(asks);
+    } catch (err) {
+      return res.status(500).json(err);
+    }
   },
 };
