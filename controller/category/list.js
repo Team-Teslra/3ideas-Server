@@ -7,44 +7,44 @@ module.exports = {
   get: async (req, res) => {
     const { categoryName } = req.params;
 
-    const category_id = await categories
-      .findOne({
-        where: { categoryName },
-      })
-      .then(category => {
-        // console.log(category.dataValues);
-        if (!category) {
-          return null;
-        }
-        return category.id;
-      });
-    // console.log({ categoryName, category_id });
-
-    if (!category_id) {
-      return res.status(400).json('invalid category name');
-    }
-
-    const questionIds = await category_question
-      .findAll({
-        attributes: ['question_id'],
-        where: { category_id },
-      })
-      .then(category_questions => {
-        category_questions = category_questions.map(value => {
-          const questionId = {};
-          Object.assign(questionId, value.dataValues);
-
-          questionId.id = questionId.question_id;
-          delete questionId.question_id;
-
-          return questionId;
+    try {
+      const category_id = await categories
+        .findOne({
+          where: { categoryName },
+        })
+        .then((category) => {
+          // console.log(category.dataValues);
+          if (!category) {
+            return null;
+          }
+          return category.id;
         });
-        return category_questions;
-      });
-    // console.log(questionIds);
+      // console.log({ categoryName, category_id });
 
-    questions
-      .findAll({
+      if (!category_id) {
+        return res.status(400).json('invalid category name');
+      }
+
+      const questionIds = await category_question
+        .findAll({
+          attributes: ['question_id'],
+          where: { category_id },
+        })
+        .then((category_questions) => {
+          category_questions = category_questions.map((value) => {
+            const questionId = {};
+            Object.assign(questionId, value.dataValues);
+
+            questionId.id = questionId.question_id;
+            delete questionId.question_id;
+
+            return questionId;
+          });
+          return category_questions;
+        });
+      // console.log(questionIds);
+
+      let asks = await questions.findAll({
         attributes: ['id', 'title', 'questionFlag', 'createdAt', 'contents'],
         include: [
           {
@@ -67,28 +67,30 @@ module.exports = {
         where: {
           [or]: questionIds,
         },
-      })
-      .then(asks => {
-        asks = asks.map(value => {
-          const ask = {};
-          Object.assign(ask, value.dataValues);
-
-          ask.username = ask.user.userName;
-          delete ask.user;
-
-          ask.commentsCount = ask.answers.length;
-          delete ask.answers;
-
-          ask.categories = ask.category_questions.map(element => {
-            const { categoryName } = element.category;
-            return { categoryName };
-          });
-          delete ask.category_questions;
-
-          return ask;
-        });
-
-        res.status(200).json(asks);
       });
+
+      asks = asks.map((value) => {
+        const ask = {};
+        Object.assign(ask, value.dataValues);
+
+        ask.username = ask.user.userName;
+        delete ask.user;
+
+        ask.commentsCount = ask.answers.length;
+        delete ask.answers;
+
+        ask.categories = ask.category_questions.map((element) => {
+          const { categoryName } = element.category;
+          return { categoryName };
+        });
+        delete ask.category_questions;
+
+        return ask;
+      });
+
+      return res.status(200).json(asks);
+    } catch (err) {
+      return res.status(500).json(err);
+    }
   },
 };
