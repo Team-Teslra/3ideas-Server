@@ -9,23 +9,28 @@ module.exports = {
     if (!Number(answerId)) {
       return res.status(400).json('invalid API');
     }
-    const answer = await answers.findOne({ where: { id: answerId } });
-    if (!answer) {
-      return res.status(400).json('invalid answer id');
-    }
 
-    const user = await users.findOne({ where: { userName: username } });
-    if (!user) {
-      return res.status(400).json('invalid username');
-    }
+    try {
+      const answer = await answers.findOne({ where: { id: answerId } });
+      if (!answer) {
+        return res.status(400).json('invalid answer id');
+      }
 
-    user_like.findOrCreate({ where: { user_id: user.id, answer_id: answerId } }).then(([, created]) => {
+      const user = await users.findOne({ where: { userName: username } });
+      if (!user) {
+        return res.status(400).json('invalid username');
+      }
+
+      const [, created] = await user_like.findOrCreate({ where: { user_id: user.id, answer_id: answerId } });
+
       if (!created) {
         return res.status(422).json('already liked');
       }
 
-      res.status(200).json(`answerId: ${answerId}, username: ${username} add like complete`);
-    });
+      return res.status(200).json(`answerId: ${answerId}, username: ${username} add like complete`);
+    } catch (err) {
+      return res.status(500).json(err);
+    }
   },
 
   //? 좋아요 취소( /like/답변글id )
@@ -36,22 +41,27 @@ module.exports = {
     if (!Number(answerId)) {
       return res.status(400).json('invalid API');
     }
-    const answer = await answers.findOne({ where: { id: answerId } });
-    if (!answer) {
-      return res.status(400).json('invalid answer id');
-    }
 
-    const user = await users.findOne({ where: { userName: username } });
-    if (!user) {
-      return res.status(400).json('invalid username');
-    }
+    try {
+      const answer = await answers.findOne({ where: { id: answerId } });
+      if (!answer) {
+        return res.status(400).json('invalid answer id');
+      }
 
-    user_like.destroy({ where: { user_id: user.id, answer_id: answerId } }).then(destroyedRows => {
+      const user = await users.findOne({ where: { userName: username } });
+      if (!user) {
+        return res.status(400).json('invalid username');
+      }
+
+      const destroyedRows = await user_like.destroy({ where: { user_id: user.id, answer_id: answerId } });
+
       if (!destroyedRows) {
         return res.status(422).json('invalid username or answerId');
       }
 
-      res.status(200).json(`answerId: ${answerId}, username: ${username} delete like complete`);
-    });
+      return res.status(200).json(`answerId: ${answerId}, username: ${username} delete like complete`);
+    } catch (err) {
+      return res.status(500).json(err);
+    }
   },
 };
