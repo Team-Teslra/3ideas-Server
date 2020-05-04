@@ -1,6 +1,6 @@
-const post = require('./post');
-const get = require('./get');
-const patch = require('./patch');
-const remove = require('./delete');
-
-module.exports = { post, get, patch, delete: remove };
+module.exports = {
+  post: require('./post'),
+  get: require('./get'),
+  patch: require('./patch'),
+  delete: require('./delete'),
+};
