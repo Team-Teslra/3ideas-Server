@@ -1,4 +1,4 @@
-const { users, answers } = require('../../models');
+const { users, answers, questions } = require('../../models');
 
 // ? 답변글 등록 요청 ( /answer/질문글id )
 module.exports = async (req, res) => {
@@ -20,13 +20,19 @@ module.exports = async (req, res) => {
       return res.status(404).json('invalid user!');
     }
 
+    const question = await questions.findOne({ where: { id: askId } });
+    // * 없는 질문일 경우 에러 보내기
+    if (!question) {
+      return res.status(404).json('invalid question!');
+    }
+
     // * answers DB에 답변을 새로 생성하고 답변 id를 보낸다.
     const newAnswer = await answers.create({ contents, user_id: user.id, question_id: askId });
     if (!newAnswer) {
       return res.status(400).json('failed to post new answer');
     }
 
-    const { id } = newAnswer.dataValues;
+    const { id } = newAnswer;
     return res.status(201).json({ id: id });
   } catch (err) {
     return res.status(500).json(err);

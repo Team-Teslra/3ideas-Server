@@ -13,9 +13,7 @@ module.exports = async (req, res) => {
   }
 
   const patchValues = {};
-  if (contents) {
-    patchValues.contents = contents;
-  }
+  patchValues.contents = contents;
 
   try {
     const updateResult = await answers.update(patchValues, { where: { id: answerId } });
