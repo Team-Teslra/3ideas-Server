@@ -8,9 +8,9 @@ module.exports = async (req, res) => {
     return res.status(400).json('bad request!');
   }
 
-  let deleteResult = await answers.destroy({ where: { id: answerId } });
-
   try {
+    let deleteResult = await answers.destroy({ where: { id: answerId } });
+
     if (!deleteResult) {
       return res.status(422).json('invalid answer id');
     }
