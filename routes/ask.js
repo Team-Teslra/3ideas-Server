@@ -8,6 +8,6 @@ router.post('/', verifyToken, askController.post);
 router.get('/:askId', askController.get);
 router.patch('/:askId', verifyToken, askController.patch);
 router.delete('/:askId', verifyToken, askController.delete);
-router.patch('/selection/:askId', verifyToken, askController.selection.patch);
+router.patch('/selection/:askId', verifyToken, askController.selection);
 
 module.exports = router;
