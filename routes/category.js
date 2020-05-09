@@ -6,6 +6,6 @@ const { categoryController } = require('../controller');
 //GET: /
 router.get('/', categoryController.get);
 //GET: /카테고리명
-router.get('/:categoryName', categoryController.list.get);
+router.get('/:categoryName', categoryController.list);
 
 module.exports = router;
