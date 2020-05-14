@@ -5,9 +5,9 @@ const router = express.Router();
 
 const { userController } = require('../controller');
 
-router.post('/signup', userController.signup.post);
-router.post('/login', userController.login.post);
-router.post('/logout', verifyToken, userController.logout.post);
+router.post('/signup', userController.signup);
+router.post('/login', userController.login);
+router.post('/logout', verifyToken, userController.logout);
 router.get('/:userName', userController.get);
 router.patch('/:userName', verifyToken, userController.patch);
 router.delete('/', verifyToken, userController.delete);
