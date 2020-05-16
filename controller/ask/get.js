@@ -1,4 +1,4 @@
-const { users, questions, category_question, answers } = require('../../models');
+const { users, questions, category_question, answers, categories } = require('../../models');
 
 //? 질문글 보기 요청 ( /ask/질문글id )
 module.exports = async (req, res) => {
@@ -36,18 +36,24 @@ module.exports = async (req, res) => {
       return res.status(404).json('invalid ask id');
     }
 
-    const { id, title, contents, questionFlag, createdAt, updatedAt } = findQuestion;
-    const username = findQuestion.user.userName;
-    const commentsCount = findQuestion.answers.length;
-    const categories = findQuestion.category_questions.map((element) => {
+    const body = findQuestion.dataValues;
+
+    body.username = body.user.userName;
+    delete body.user;
+
+    body.commentsCount = body.answers.length;
+    delete body.answers;
+
+    body.categories = body.category_questions.map((element) => {
       const { categoryName } = element.category;
       return { categoryName };
     });
+    delete body.category_questions;
 
-    return res
-      .status(200)
-      .json({ id, title, contents, username, questionFlag, createdAt, updatedAt, commentsCount, categories });
+    console.log(body);
+    return res.status(200).json(body);
   } catch (err) {
+    console.log(err);
     return res.status(500).json(err);
   }
 };
