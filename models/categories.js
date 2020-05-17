@@ -6,12 +6,14 @@ module.exports = (sequelize, DataTypes) => {
     {
       categoryName: {
         type: DataTypes.STRING,
+        allowNull: false,
+        unique: true,
       },
     },
     {},
   );
 
-  categories.associate = function(models) {
+  categories.associate = function (models) {
     models.categories.hasMany(models.category_question, {
       foreignKey: 'category_id',
       onDelete: 'cascade',
